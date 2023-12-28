@@ -2,7 +2,7 @@ REM Set the name of the virtual environment
 set VENV_NAME=venv
 
 REM Set the Python executable path (modify if needed)
-set PYTHON_EXECUTABLE=python
+set PYTHON_EXECUTABLE=python3.11
 
 REM Create virtual environment
 %PYTHON_EXECUTABLE% -m venv %VENV_NAME%
