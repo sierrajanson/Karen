@@ -7,9 +7,7 @@ class Testor():
         self.classifier = pipeline(
     model="lxyuan/distilbert-base-multilingual-cased-sentiments-student", 
     return_all_scores=True)
-    def check(self):
-        answer=self.answers
-        statement=self.statement
+    def check(self,statement,answer):
         classifier=self.classifier
         highest_val=["default",0]
         for i in classifier(statement)[0]:
@@ -21,5 +19,5 @@ class Testor():
             return f"Correct Answer"
 
             
-
+Testor().check("I'm feeling good!","positive")
         
