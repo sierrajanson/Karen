@@ -5,6 +5,7 @@ class Testor():
     def __init__(self,statement,answer):
         self.statement=statement
         self.answer=answer
+    @property #converted to property to avoid unecessary function building 
     def check(self):
         from transformers import pipeline
         expected=(pipeline('sentiment-analysis')(self.statement))
@@ -14,4 +15,4 @@ class Testor():
         else:
             print(f"Test Passed Confidence Value:{expected[0].get('score')//(1/100)}%")
         
-# Example usecase Testor('i love you','positive').check()
+# Example usecase Testor('i love you','positive').check
