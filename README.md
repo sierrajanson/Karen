@@ -1,5 +1,5 @@
-**Re-creating Spongebob's AI gf Karen:
-**
+Re-creating Spongebob's AI gf Karen:
+
 Stage #1: Speech to Text and Sentiment Analysis
 - Karen functionality: can text whether speech spoken to her is positive or negative, and respond in turn with a smiley face or a frowning face
 
