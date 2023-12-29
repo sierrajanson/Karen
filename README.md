@@ -27,8 +27,8 @@ Re-creating Spongebob's AI 🤖 gf 💝 Karen
 
 - [Sierra Janson](https://github.com/sierrajanson)
 - [Sankritya Anand Rai](https://github.com/sankie005)
-- [Brendan](https://github.com/sierrajanson)
-- [Shubhi Mishra](https://github.com/sierrajanson)
+- [Brendan](https://github.com/brendanRose1)
+- [Shubhi Mishra](https://github.com/tardigrades3)
 
 ## License
 
