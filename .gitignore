@@ -1,2 +1,3 @@
 # We gotta ignore our virtual environment files 
 venv 
+app/files/empty.txt
