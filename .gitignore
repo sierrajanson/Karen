@@ -1,3 +1,4 @@
 # We gotta ignore our virtual environment files 
+#ignoring Pycache built when Server is running 
 venv 
-app/files/empty.txt
+app/__pycache__/  

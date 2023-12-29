@@ -7,7 +7,7 @@ from starlette.responses import FileResponse
 import os
 app = FastAPI()
 os.environ['SENTENCE_TRANSFORMERS_HOME'] = './.cache' ## For Docker 
-app.mount("/files/", StaticFiles(directory="files"), name="index")
+app.mount("/files/", StaticFiles(directory='../app'), name="index")
 class TextInput(BaseModel):
     InputText: str # python casing??????
 
