@@ -1,4 +1,4 @@
-# Authors: Sierra Janson,
+# Authors: Sierra Janson, Brendan Rose, Shubhi Mishra
 # Date: 12/28/2023
 # Project: Karen Sentiment Analysis
 # python testing.py 
@@ -15,11 +15,8 @@
     # a. if not enter in the command ".venv/scripts/activate" + wait for this to be true
 # 3. enter the command "pip install nltk" in your terminal
 #from testor import Testorv2
-import nltk 
 # 4. uncomment this below and run once to download reviews to local system
     # nltk.download('movie_reviews') 
-import nltk
-import ssl
 
 # try:
 #     _create_unverified_https_context = ssl._create_unverified_context
@@ -29,16 +26,15 @@ import ssl
 #     ssl._create_default_https_context = _create_unverified_https_context
 
 # nltk.download()
-# nltk.download('movie_reviews')
-from nltk.corpus import movie_reviews
+#nltk.download('movie_reviews')
 
-size = 5                                                                                 # will adjust to a greater number once we are confident it is working as intended
-pos_reviews = movie_reviews.raw(fileids=movie_reviews.fileids(categories='pos')[0:size]) # movie_reviews.raw() seems to return a string with the amount of reviews you specify using size
-neg_reviews = movie_reviews.raw(fileids=movie_reviews.fileids(categories='neg')[0:size]) # 4124283 positive reviews and 3661721 negative reviews in total
+#size = 5                                                                                 # will adjust to a greater number once we are confident it is working as intended
+#pos_reviews = movie_reviews.raw(fileids=movie_reviews.fileids(categories='pos')[0:size]) # movie_reviews.raw() seems to return a string with the amount of reviews you specify using size
+#neg_reviews = movie_reviews.raw(fileids=movie_reviews.fileids(categories='neg')[0:size]) # 4124283 positive reviews and 3661721 negative reviews in total
 
 def parsing(unparsed_text):                                                              # removes text that does not have a sentiment
     punctuation_chrs = "\"!,.?();:"                                                      # removing punctuation (these actually can contribute to sentiment but for our basic model we're gonna ignore them for now)
-    filler_words = ["the","and","for", "with", "it's", "she","you","they","her","him"]   # removing preprepositional phrases 
+    filler_words = ["the","and","for", "with", "it's", "she","you","they","her","him","are"]   # removing preprepositional phrases 
 
     words = unparsed_text.split(" ")                                                     # split into individual words and remove spaces
     parsed_words = []
@@ -68,7 +64,7 @@ def prediction(x,reviewLength):
         # for example: c = positive 
     # STEPS:
     # 1. Find P(x|c)
-        # how many words in x are in c vocabulary
+        # how many words in x are in c vocabulary (how many times they actually show up)
         # how many words in ['hello', 'today', 'great', 'day'] are in the positive vocabulary
     # 2. Find P(c)                                                                      
         # number of positive reviews in training_data / total # of reviews
@@ -81,20 +77,32 @@ def prediction(x,reviewLength):
     negativeWords = parsing(neg_reviews)
     
     pxc = 0#words in positivitive vocabulary
-    pc = len(pos_reviews)/(len(pos_reviews)+len(neg_reviews))
+    pc = 0.5 # this is true if reviewLength is used as the endpoint for both neg_reviews and pos_reviews above
     wordsinTotalVocab = 0
     for word in x:
-        if word in positiveWords or word in negativeWords:
-            wordsinTotalVocab+=1
+        if word in positiveWords:
+            wordsinTotalVocab += positiveWords.count(word)
+        if word in negativeWords:
+            wordsinTotalVocab += negativeWords.count(word)
     px = wordsinTotalVocab/(len(positiveWords)+len(negativeWords))#words in vocabulary
     for karenword in x:
        if karenword in positiveWords:
-            pxc += 1
+            pxc += positiveWords.count(karenword)
+    pxc = pxc / len(positiveWords)
     pcx = (pxc * pc) / px
-    if(pcx > 0.5):
+
+    pxc_neg = 0#words in positivitive vocabulary
+    for karenword in x:
+       if karenword in negativeWords:
+            pxc_neg += negativeWords.count(karenword)
+    pxc_neg /= len(negativeWords)
+    pcx_neg = (pxc_neg * pc) / px
+    
+    if pxc > pxc_neg:
         sentiment = "POSITIVE"
     else:
         sentiment = "NEGATIVE"
+    
     # NOTES:
     # in Scai I think they used logarithms in their algorithm to increase the accuracy as well as some sort of smoothing.. 
     # we should eventually implement both
@@ -102,21 +110,16 @@ def prediction(x,reviewLength):
     # (something that could initialize constants like P(c), pos_vocab, neg_vocab)
     # even though Sankie is an oop hater (raised eyebrow emoji) no i love it!! I LOVE OOP
     return sentiment
-def outputlistgenerator(words):
-    outputlist=[]
-    for i in words:
-        outputlist.append((i,prediction(i)))
-    return outputlist
-
+def sentiment_analysis(input_text):
+    import nltk 
+    from nltk.corpus import movie_reviews
+    nltk.download('movie_reviews')
+    parsed_input = parsing(input_text)
+    sentiment = prediction(parsed_input,100)
+    return sentiment
 
 if __name__ == "__main__":
-    input_text = "hello ! today is a great day"     # on the react or python side we need to parse the transcript to surround all punctuation with a space so that it can be processed by parsing function correctly
+    input_text = "unlikeable lame"     # on the react or python side we need to parse the transcript to surround all punctuation with a space so that it can be processed by parsing function correctly
     parsed_input = parsing(input_text)
-    sentiment = prediction(parsed_input, 2)
-
-# from testor import Testorv2
-# def testorooni(words):
-#     return Testorv2(outputlistgenerator(words)).check
-
-
-# testorooni(["happy","stinks","dumb","beautiful"])
+    sentiment = prediction(parsed_input, 1115)
+    print(sentiment)
