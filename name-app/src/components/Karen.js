@@ -3,38 +3,45 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import '../App.css';
 import api from '../api';
 
-const Karen = () =>{
-  const {
-      transcript,
-      listening,
-      resetTranscript,
-      browserSupportsSpeechRecognition
-  } = useSpeechRecognition();
+const Karen = () => {
+    const {
+        transcript,
+        listening,
+        resetTranscript,
+        browserSupportsSpeechRecognition
+    } = useSpeechRecognition();
+    const [sentiment,moodSwing] = useState(".__.");
 
-
-    const [data, setData] = useState(null);
-    useEffect(()=>{     // on change, log what is being said to verify that microphone is working
-      console.log(transcript);
-      console.log(data);
-    })
-
-    const fetchDat = async () => {
+    const fetchDat = async (input_text) => {
       const resp = await api.get('/testing/',{
-        params: {input_data:'sunshine and rainbows'},
+        params: {input_data:input_text},
       });
-      console.log(resp.data);
+      console.log(resp.data.emotion);
+      if (resp.data.emotion === "POSITIVE!"){
+        moodSwing("^__^");
+      }
+      else{
+        moodSwing("u__u");
+      }
     }
 
-    useEffect(()=>{
-      fetchDat();
-    },[]);
+    // useEffect(()=>{
+    //   fetchDat();
+    // },[]);
+    
+    const handleDone = () => {
+      console.log(transcript);
+      SpeechRecognition.stopListening();
+      fetchDat(transcript);
+    }      
 
     return ( // can give startListening method argument of "{continuous: true}" so it doesn't listening after it detects that you've stopped speaking
-    <div >
+    <div>
       <div className="microphone_buttons"> 
-        <button onClick={SpeechRecognition.stopListening}>Stop</button>
+        <button onClick={SpeechRecognition.startListening}>Start</button>
+        <button onClick={(e) => handleDone()}>Stop</button>
       </div>
-      <h1> :() </h1>
+      <div className="face">{sentiment}</div>
     </div>
   );
 }
