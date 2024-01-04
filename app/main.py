@@ -10,8 +10,8 @@ from typing import List
 app = FastAPI()
 
 # uvicorn main:app --reload
-# os.environ['SENTENCE_TRANSFORMERS_HOME'] = './.cache' ## For Docker 
-# app.mount("/files/", StaticFiles(directory='../app'), name="index")
+os.environ['SENTENCE_TRANSFORMERS_HOME'] = './.cache' ## For Docker 
+app.mount("/files/", StaticFiles(directory='../app'), name="index")
 origins = ["*"]
     # 'http://localhost:3000'
 #]
@@ -43,8 +43,6 @@ def parsing(unparsed_text):                                                     
     
 def prediction(x, pos_reviews, neg_reviews):
     sentiment = None
-
-
     # Naive Bayes equation: P(c|x) = [ P(x|c) P(c) ]/ P(x)
     # x is text_inputted to Karen that has been parsed in list format 
         # for example: x = ['hello', 'today', 'great', 'day']
@@ -90,14 +88,8 @@ def prediction(x, pos_reviews, neg_reviews):
         sentiment = "POSITIVE!"
     else:
         sentiment = "NEGATIVE!"
-    
-    # NOTES:
-    # in Scai I think they used logarithms in their algorithm to increase the accuracy as well as some sort of smoothing.. 
-    # we should eventually implement both
-    # I think it would be a good idea to make a class that encapsulates the prediction and parsing functions for elegance
-    # (something that could initialize constants like P(c), pos_vocab, neg_vocab)
-    # even though Sankie is an oop hater (raised eyebrow emoji) no i love it!! I LOVE OOP
     return sentiment
+
 def sentiment_analysis(input_text):
     import nltk 
     from nltk.corpus import movie_reviews
@@ -108,15 +100,9 @@ def sentiment_analysis(input_text):
     sentiment = prediction(parsed_input, pos_reviews, neg_reviews)
     return sentiment
 
-# def emotion_detection(str1: str) -> str:
-#     return sentiment_analysis(str1)
-    # from transformers import pipeline
-    # pipe = pipeline(model="distilbert-base-uncased-finetuned-sst-2-english")
-    # expected=(pipe(str1))
-    # return expected[0].get('label')  
-# @app.get("/")
-# async def read_index():
-#     return FileResponse('index.html')
+@app.get("/")
+async def read_index():
+    return FileResponse('index.html')
 
 @app.get("/testing/")
 async def root(input_data):
